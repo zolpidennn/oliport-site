@@ -1363,6 +1363,93 @@
             transform: scale(1.1);
         }
 
+        /* Cookie Consent Banner */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 1.5rem;
+            z-index: 9999;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cookie-banner.visible {
+            transform: translateY(0);
+        }
+
+        .cookie-banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .cookie-banner-content {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .cookie-text {
+            flex: 1;
+        }
+
+        .cookie-text h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+        }
+
+        .cookie-text p {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        .cookie-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .cookie-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .cookie-btn-accept {
+            background-color: var(--color-primary);
+            color: #0a0a0a;
+        }
+
+        .cookie-btn-accept:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        .cookie-btn-reject {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .cookie-btn-reject:hover {
+            border-color: var(--color-text-secondary);
+        }
+
         .whatsapp-btn svg {
             width: 28px;
             height: 28px;
@@ -2076,6 +2163,148 @@ ${message}`
 
     window.open(whatsappURL, "_blank")
 })
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookie-banner" class="cookie-banner" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-desc">
+    <div class="cookie-banner-content">
+        <div class="cookie-text">
+            <h3 id="cookie-title">Usamos cookies</h3>
+            <p id="cookie-desc">
+                Utilizamos cookies para melhorar sua experiência em nosso site e analisar o tráfego. 
+                Ao clicar em "Aceitar", você concorda com o uso de cookies para fins analíticos.
+            </p>
+        </div>
+        <div class="cookie-actions">
+            <button id="cookie-reject" class="cookie-btn cookie-btn-reject">Recusar</button>
+            <button id="cookie-accept" class="cookie-btn cookie-btn-accept">Aceitar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Tracking Script -->
+<script>
+(function() {
+    const API_URL = '/api/analytics/track';
+    
+    // Cookie utility functions
+    function setCookie(name, value, days) {
+        const expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; SameSite=Lax';
+    }
+    
+    function getCookie(name) {
+        return document.cookie.split('; ').reduce((r, v) => {
+            const parts = v.split('=');
+            return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+        }, '');
+    }
+    
+    // Analytics tracking function
+    function trackEvent(eventType, eventData) {
+        const consent = getCookie('analytics_consent');
+        if (consent !== 'accepted') return;
+        
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: eventType,
+                event_data: { ...eventData, page_path: window.location.pathname }
+            })
+        }).catch(err => console.error('Analytics error:', err));
+    }
+    
+    // Cookie consent handling
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    const rejectBtn = document.getElementById('cookie-reject');
+    
+    function showBanner() {
+        setTimeout(() => banner.classList.add('visible'), 500);
+    }
+    
+    function hideBanner() {
+        banner.classList.remove('visible');
+    }
+    
+    function handleConsent(accepted) {
+        setCookie('analytics_consent', accepted ? 'accepted' : 'rejected', 365);
+        hideBanner();
+        
+        // Track consent decision
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: 'cookie_consent',
+                event_data: { consent_given: accepted }
+            })
+        }).catch(() => {});
+        
+        if (accepted) {
+            // Track page view after consent
+            trackEvent('page_view', {});
+        }
+    }
+    
+    // Check if consent already given
+    const existingConsent = getCookie('analytics_consent');
+    if (!existingConsent) {
+        showBanner();
+    } else if (existingConsent === 'accepted') {
+        // Track page view for returning users who accepted
+        trackEvent('page_view', {});
+    }
+    
+    acceptBtn.addEventListener('click', () => handleConsent(true));
+    rejectBtn.addEventListener('click', () => handleConsent(false));
+    
+    // Click tracking for important elements
+    function setupClickTracking() {
+        // WhatsApp button
+        const whatsappBtns = document.querySelectorAll('a[href*="wa.me"], .whatsapp-btn');
+        whatsappBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                trackEvent('click', { event_name: 'whatsapp_click', element_class: btn.className });
+            });
+        });
+        
+        // Instagram link
+        const instagramLinks = document.querySelectorAll('a[href*="instagram.com"]');
+        instagramLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                trackEvent('click', { event_name: 'instagram_click', element_class: link.className });
+            });
+        });
+        
+        // Address/Maps link
+        const addressLinks = document.querySelectorAll('a[href*="maps.app.goo.gl"], a[href*="google.com/maps"]');
+        addressLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                trackEvent('click', { event_name: 'address_click', element_class: link.className });
+            });
+        });
+        
+        // Contact buttons (phone, email, form submit)
+        const contactBtns = document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"], .btn[href="#contato"]');
+        contactBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                trackEvent('click', { event_name: 'contact_click', element_class: btn.className });
+            });
+        });
+        
+        // Form submission
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', () => {
+                trackEvent('click', { event_name: 'form_submit', element_id: 'contact-form' });
+            });
+        }
+    }
+    
+    setupClickTracking();
+})();
 </script>
 
 </body>
