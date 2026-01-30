@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Login | Oliport Admin</title>
+    <link rel="icon" href="/image/favicon.png" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #F5B800;
+            --color-primary-dark: #D9A300;
+            --color-background: #0a0a0a;
+            --color-surface: #141414;
+            --color-surface-elevated: #1a1a1a;
+            --color-text: #fafafa;
+            --color-text-secondary: #a3a3a3;
+            --color-border: #262626;
+            --color-error: #ef4444;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a0a0a;
+            font-weight: 800;
+        }
+
+        .login-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--color-surface-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--color-primary);
+            color: #0a0a0a;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-login:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <span class="login-logo-icon">O</span>
+                    <span>Oliport</span>
+                </div>
+                <p class="login-title">Painel Administrativo</p>
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+                </div>
+
+                <button type="submit" class="btn-login" id="btn-login">Entrar</button>
+            </form>
+
+            <a href="/" class="back-link">Voltar ao site</a>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://jrzimvujhwflmjyglhfz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyemltdnVqaHdmbG1qeWdsaGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MjUwODksImV4cCI6MjA2NDIwMTA4OX0.pjYvfPMNXkS-C3L1rN_9KgGxmwBHNHIw5q6pKMeVGLA';
+
+        // Check if already logged in
+        (function() {
+            const session = localStorage.getItem('admin_session');
+            if (session) {
+                try {
+                    const sessionData = JSON.parse(session);
+                    if (sessionData.expires_at > Date.now()) {
+                        window.location.href = '/admin/dashboard.html';
+                    } else {
+                        localStorage.removeItem('admin_session');
+                    }
+                } catch (e) {
+                    localStorage.removeItem('admin_session');
+                }
+            }
+        })();
+
+        // Hardcoded credentials (as per requirement)
+        const VALID_EMAIL = 'leonardo@oliport.com.br';
+        const VALID_PASSWORD = 'Leolucena1!';
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const btnLogin = document.getElementById('btn-login');
+
+            errorDiv.classList.remove('visible');
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Entrando...';
+
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+                // Create session
+                const session = {
+                    email: email,
+                    created_at: Date.now(),
+                    expires_at: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+                };
+                
+                localStorage.setItem('admin_session', JSON.stringify(session));
+                window.location.href = '/admin/dashboard.html';
+            } else {
+                errorDiv.textContent = 'E-mail ou senha incorretos.';
+                errorDiv.classList.add('visible');
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Entrar';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dashboard | Oliport Admin</title>
+    <link rel="icon" href="/image/favicon.png" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-primary: #F5B800;
+            --color-primary-dark: #D9A300;
+            --color-background: #0a0a0a;
+            --color-surface: #141414;
+            --color-surface-elevated: #1a1a1a;
+            --color-text: #fafafa;
+            --color-text-secondary: #a3a3a3;
+            --color-text-muted: #737373;
+            --color-border: #262626;
+            --color-success: #22c55e;
+            --color-info: #3b82f6;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a0a0a;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        .header-title {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-left: 1rem;
+            padding-left: 1rem;
+            border-left: 1px solid var(--color-border);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--color-text-secondary);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--color-danger);
+            color: #fff;
+        }
+
+        /* Main Container */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--color-text-secondary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-icon.views {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--color-info);
+        }
+
+        .stat-icon.instagram {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .stat-icon.whatsapp {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--color-success);
+        }
+
+        .stat-icon.address {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--color-warning);
+        }
+
+        .stat-icon.contact {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Period Selector */
+        .period-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .period-btn {
+            padding: 0.375rem 0.75rem;
+            background: transparent;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .period-btn:hover {
+            border-color: var(--color-text-secondary);
+        }
+
+        .period-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #0a0a0a;
+        }
+
+        /* Events Table */
+        .table-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .table-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-secondary);
+            background: var(--color-surface-elevated);
+        }
+
+        td {
+            font-size: 0.875rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--color-surface-elevated);
+        }
+
+        .event-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .event-badge.instagram {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .event-badge.whatsapp {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--color-success);
+        }
+
+        .event-badge.address {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--color-warning);
+        }
+
+        .event-badge.contact {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        .event-badge.linkedin {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--color-info);
+        }
+
+        .event-badge.facebook {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--color-info);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--color-text-secondary);
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.75rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div style="display: flex; align-items: center;">
+                <div class="header-logo">
+                    <span class="header-logo-icon">O</span>
+                    <span>Oliport</span>
+                </div>
+                <span class="header-title">Dashboard Analytics</span>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Ver Site
+                </a>
+                <button class="btn btn-danger" id="logout-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard de Analytics</h1>
+            <p class="page-subtitle">Acompanhe as metricas do seu site em tempo real</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon views">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="stat-views">-</div>
+                <div class="stat-label">Visualizacoes</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="stat-instagram">-</div>
+                <div class="stat-label">Cliques Instagram</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon whatsapp">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="stat-whatsapp">-</div>
+                <div class="stat-label">Cliques WhatsApp</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon address">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="stat-address">-</div>
+                <div class="stat-label">Cliques Endereco</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value" id="stat-contact">-</div>
+                <div class="stat-label">Envios Formulario</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Visualizacoes e Eventos por Mes</h2>
+                    <div class="period-selector">
+                        <button class="period-btn" data-months="6">6 meses</button>
+                        <button class="period-btn active" data-months="12">12 meses</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Distribuicao de Eventos</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Events Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h2 class="table-title">Eventos Recentes</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Pagina</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-table-body">
+                        <tr>
+                            <td colspan="3" class="loading">
+                                <div class="loading-spinner"></div>
+                                Carregando eventos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://jrzimvujhwflmjyglhfz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyemltdnVqaHdmbG1qeWdsaGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MjUwODksImV4cCI6MjA2NDIwMTA4OX0.pjYvfPMNXkS-C3L1rN_9KgGxmwBHNHIw5q6pKMeVGLA';
+
+        // Auth check
+        (function() {
+            const session = localStorage.getItem('admin_session');
+            if (!session) {
+                window.location.href = '/admin/login.html';
+                return;
+            }
+            try {
+                const sessionData = JSON.parse(session);
+                if (sessionData.expires_at < Date.now()) {
+                    localStorage.removeItem('admin_session');
+                    window.location.href = '/admin/login.html';
+                }
+            } catch (e) {
+                localStorage.removeItem('admin_session');
+                window.location.href = '/admin/login.html';
+            }
+        })();
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('admin_session');
+            window.location.href = '/admin/login.html';
+        });
+
+        // Chart.js global config
+        Chart.defaults.color = '#a3a3a3';
+        Chart.defaults.borderColor = '#262626';
+
+        let mainChart = null;
+        let pieChart = null;
+        let currentMonths = 12;
+
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        // Fetch data from Supabase
+        async function fetchData(table, options = {}) {
+            let url = `${SUPABASE_URL}/rest/v1/${table}?select=*`;
+            
+            if (options.order) {
+                url += `&order=${options.order}`;
+            }
+            if (options.limit) {
+                url += `&limit=${options.limit}`;
+            }
+            if (options.filter) {
+                url += `&${options.filter}`;
+            }
+
+            const response = await fetch(url, {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+            
+            return response.json();
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Get event badge class
+        function getEventBadgeClass(eventType) {
+            const types = {
+                'instagram_click': 'instagram',
+                'whatsapp_click': 'whatsapp',
+                'address_click': 'address',
+                'contact_form_submit': 'contact',
+                'linkedin_click': 'linkedin',
+                'facebook_click': 'facebook'
+            };
+            return types[eventType] || 'contact';
+        }
+
+        // Get event label
+        function getEventLabel(eventType) {
+            const labels = {
+                'instagram_click': 'Instagram',
+                'whatsapp_click': 'WhatsApp',
+                'address_click': 'Endereco',
+                'contact_form_submit': 'Formulario',
+                'linkedin_click': 'LinkedIn',
+                'facebook_click': 'Facebook'
+            };
+            return labels[eventType] || eventType;
+        }
+
+        // Group data by month
+        function groupByMonth(data, dateField, months) {
+            const now = new Date();
+            const result = {};
+            
+            // Initialize months
+            for (let i = months - 1; i >= 0; i--) {
+                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                result[key] = 0;
+            }
+            
+            // Count data
+            data.forEach(item => {
+                const date = new Date(item[dateField]);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                if (result.hasOwnProperty(key)) {
+                    result[key]++;
+                }
+            });
+            
+            return result;
+        }
+
+        // Count events by type
+        function countEventsByType(events) {
+            const counts = {
+                'instagram_click': 0,
+                'whatsapp_click': 0,
+                'address_click': 0,
+                'contact_form_submit': 0,
+                'linkedin_click': 0,
+                'facebook_click': 0
+            };
+            
+            events.forEach(event => {
+                if (counts.hasOwnProperty(event.event_type)) {
+                    counts[event.event_type]++;
+                }
+            });
+            
+            return counts;
+        }
+
+        // Render main chart
+        function renderMainChart(pageViews, events, months) {
+            const viewsByMonth = groupByMonth(pageViews, 'created_at', months);
+            const eventsByMonth = groupByMonth(events, 'created_at', months);
+            
+            const labels = Object.keys(viewsByMonth).map(key => {
+                const [year, month] = key.split('-');
+                return `${monthNames[parseInt(month) - 1]} ${year}`;
+            });
+
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (mainChart) {
+                mainChart.destroy();
+            }
+
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Visualizacoes',
+                            data: Object.values(viewsByMonth),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Eventos',
+                            data: Object.values(eventsByMonth),
+                            borderColor: '#F5B800',
+                            backgroundColor: 'rgba(245, 184, 0, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render pie chart
+        function renderPieChart(eventCounts) {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            
+            if (pieChart) {
+                pieChart.destroy();
+            }
+
+            const data = [
+                eventCounts['instagram_click'],
+                eventCounts['whatsapp_click'],
+                eventCounts['address_click'],
+                eventCounts['contact_form_submit'],
+                eventCounts['linkedin_click'],
+                eventCounts['facebook_click']
+            ];
+
+            const hasData = data.some(v => v > 0);
+
+            pieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Instagram', 'WhatsApp', 'Endereco', 'Formulario', 'LinkedIn', 'Facebook'],
+                    datasets: [{
+                        data: hasData ? data : [1, 1, 1, 1, 1, 1],
+                        backgroundColor: [
+                            '#ec4899',
+                            '#22c55e',
+                            '#f59e0b',
+                            '#8b5cf6',
+                            '#3b82f6',
+                            '#6366f1'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render events table
+        function renderEventsTable(events) {
+            const tbody = document.getElementById('events-table-body');
+            
+            if (events.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p>Nenhum evento registrado ainda.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = events.slice(0, 20).map(event => `
+                <tr>
+                    <td>
+                        <span class="event-badge ${getEventBadgeClass(event.event_type)}">
+                            ${getEventLabel(event.event_type)}
+                        </span>
+                    </td>
+                    <td>${event.page_url || '/'}</td>
+                    <td>${formatDate(event.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Load all data
+        async function loadDashboardData() {
+            try {
+                // Fetch all data in parallel
+                const [pageViews, events] = await Promise.all([
+                    fetchData('page_views', { order: 'created_at.desc' }),
+                    fetchData('analytics_events', { order: 'created_at.desc' })
+                ]);
+
+                // Update stats
+                document.getElementById('stat-views').textContent = pageViews.length;
+                
+                const eventCounts = countEventsByType(events);
+                document.getElementById('stat-instagram').textContent = eventCounts['instagram_click'];
+                document.getElementById('stat-whatsapp').textContent = eventCounts['whatsapp_click'];
+                document.getElementById('stat-address').textContent = eventCounts['address_click'];
+                document.getElementById('stat-contact').textContent = eventCounts['contact_form_submit'];
+
+                // Render charts
+                renderMainChart(pageViews, events, currentMonths);
+                renderPieChart(eventCounts);
+
+                // Render table
+                renderEventsTable(events);
+
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Period selector
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMonths = parseInt(btn.dataset.months);
+                
+                const [pageViews, events] = await Promise.all([
+                    fetchData('page_views', { order: 'created_at.desc' }),
+                    fetchData('analytics_events', { order: 'created_at.desc' })
+                ]);
+                
+                renderMainChart(pageViews, events, currentMonths);
+            });
+        });
+
+        // Initialize
+        loadDashboardData();
+    </script>
+</body>
+</html>
