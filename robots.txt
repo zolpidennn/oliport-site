@@ -1,0 +1,24 @@
+# Robots.txt para Oliport Segurança Eletrônica
+# https://www.oliport.com.br
+
+User-agent: *
+Allow: /
+
+# Bloquear pasta de API (opcional)
+Disallow: /api/config.php
+
+# Bloquear pasta de banco de dados
+Disallow: /database/
+
+# Sitemap
+Sitemap: https://www.oliport.com.br/sitemap.xml
+
+# Google Bot específico
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
